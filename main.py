@@ -12,7 +12,8 @@ def fn_anotar():
         "E": ("Just Exit", my_quit_fn),
         "S": ("Save and Exit", fn_save_exit),
         "P": ("Previous Submission", fn_previous),
-        "N": ("Next Submission", fn_next)
+        "N": ("Next Submission", fn_next),
+        "G": ("Go to rumour n", fn_goto)
     }
 
     resp=None
@@ -26,12 +27,12 @@ def fn_anotar():
 
         if "Title" not in _csv[i]:
 
-            format(_csv[i]['Rumour'], _csv[i]['Submission'])
+            format(_csv[i]['Rumour'], _csv[i]['Submission'], i)
 
             ans = input("\n$: ")
 
             resp = opcoes.get(ans.upper(),[None,invalido])[1](csv=_csv, i=i, opcoes=opcoes, ans=ans)
-            i += resp
+            i = resp
 
             if i < 0:
                 return
@@ -57,16 +58,22 @@ def fn_save_exit(**kwargs):
 
     return -2000
 
-def format(rumour, submission):
-    print(rumour + '\n')
+def format(rumour, submission, i):
+    print(rumour + '\n' + str(i) + '\n')
     print('Submission:\n' + submission)
-    print('\n(1)Disbelieve  (2)Neutral  (3)Believe\n\n(P)Previous Submission  (N)Next Submission\n(E)Just Exit  (S)Save and Exit')
+    print('\n(1)Disbelieve  (2)Neutral  (3)Believe\n\n(P)Previous Submission  (N)Next Submission (G)Go to rumour n\n(E)Just Exit  (S)Save and Exit')
 
 def fn_previous(**kwargs):
-    return -1
+    return kwargs['i']-1
 
 def fn_next(**kwargs):
-    return 1
+    return kwargs['i']+1
+
+def fn_goto(**kwargs):
+    ans = input("Type the rumour number\n$: ")
+    if ans.isdigit():
+        return int(ans)
+    return kwargs['i']
 
 def fn_set(**kwargs):
     # csv = kwargs['csv']
