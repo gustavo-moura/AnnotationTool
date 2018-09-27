@@ -22,7 +22,7 @@ def fn_anotar():
     
     i=0
     while i< len(_csv):
-        os.system('cls' if os.name == 'nt' else 'clear')
+        clear()
 
         if "Title" not in _csv[i]:
 
@@ -41,8 +41,10 @@ def fn_anotar():
 
 def fn_save_exit(**kwargs):
     # pd.DataFrame(csv).T.reset_index().to_csv('myfile.csv', header=False, index=False)
-    
-    with open('employee_file.csv', mode='w') as employee_file:
+    filename = input("Give a name to your file: ")
+
+
+    with open(str(filename)+".csv", mode='w') as employee_file:
         employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         for row in _csv:
@@ -76,37 +78,45 @@ def fn_set(**kwargs):
 
     return 1
 
-def abrirCSV():    
+def abrirCSV():  
+    clear()
 
-    with open('Rumores discutidos no Reddit.csv', newline='') as csvfile:
-        dicts = []
+    filename = input("Give the name of your .csv file (it is case SeNsiTIvE!).\nJust the name, without the extension.\n$: ")  
 
-        df = pd.read_csv(csvfile)
+    try:
+        with open(str(filename)+".csv", newline='') as csvfile:
+            dicts = []
 
-        rumour = None
+            df = pd.read_csv(csvfile)
 
-        for i in range(len(df.index)):
+            rumour = None
 
-            if "Rumour: " in df["Submission"][i]:
-                rumour = df["Submission"][i]
-                dicts.append({"Rumour": rumour, "Title": "True"})
+            for i in range(len(df.index)):
 
-            else:
-                d = {
-                    "Rumour": rumour,
-                    "Submission": df["Submission"][i],
-                    "Label": df["Label"][i]
-                }
-                dicts.append(d)
+                if "Rumour: " in df["Submission"][i]:
+                    rumour = df["Submission"][i]
+                    dicts.append({"Rumour": rumour, "Title": "True"})
 
-        return dicts
+                else:
+                    d = {
+                        "Rumour": rumour,
+                        "Submission": df["Submission"][i],
+                        "Label": df["Label"][i]
+                    }
+                    dicts.append(d)
 
+            return dicts
+    except Exception as e:
+        print("File not supported!")
+        print(e)
 
 def my_add_fn():
    print("SUM:%s"%sum(map(int,input("Enter 2 numbers seperated by a space").split())))
 
 def my_quit_fn(**kwargs):
-   raise SystemExit
+    ans = input("Are you sure you want to exit? (Y) \"Yes, and leave\" or (N) \"No and go back\"\n$: ")
+    if(ans.upper()=="Y"):
+        raise SystemExit
 
 def invalido(**kwargs):
    print(input("INVALID CHOICE!\n Press Enter to try again..."))
@@ -116,22 +126,27 @@ def invalid():
    print(input("INVALID CHOICE!\n Press Enter to try again..."))
    
 
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 
 menu = {
-    "1":("Anotatte",fn_anotar),
-    "0":("Quit",my_quit_fn)
+    "S":("Start!",fn_anotar),
+    "E":("Exit",my_quit_fn)
 }
 
 while 1:
-    
+    clear()
+    print("Welcome to the Annotation facilitator tool")
+
+    print("To start, make sure you have a file .csv in your folder\nNeither he file extension .xlsx or other works, just .csv!")
+
+    print("The system will automatically iterate over the many rows of your file and then you can choose the type of the field\n")
+
     for key in sorted(menu.keys()):
         print(key+":" + menu[key][0])
 
-    ans = input("Make A Choice: ")
-    menu.get(ans,[None,invalid])[1]()
-
-    # os.system('cls' if os.name == 'nt' else 'clear')
-
+    ans = input("\nChoose an option.\n$: ")
+    menu.get(ans.upper(),[None,invalid])[1]()
 
